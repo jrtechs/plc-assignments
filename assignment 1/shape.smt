@@ -19,3 +19,27 @@
     (method setPerimeter: (p)
         (set perimeter p))
 )
+
+
+(class Circle Shape
+    (radius)
+)
+
+
+(class Rectangle Shape
+    (length width)
+)
+
+
+(class Square Rectangle
+
+)
+
+
+(class Triangle Shape
+    (side1 side2 side3)
+)
+
+
+(class Equilateral Triangle
+)
