@@ -132,12 +132,7 @@
     ()
     
     (class-method initalize:square (len)
-        (init:square (new self) len)
-    )
-
-    (method init:square (len)
-        (setSide: self len)
-        self
+        (init::rectangle (new self) len len)
     )
 
     (method getSide ()
@@ -241,6 +236,21 @@
 
 (class Equilateral Triangle
     ()
+
+    (class-method initalize:equilateral (side)
+        (init:::triangle (new self) side side side)
+    )
+
+    (method getSide ()
+        side1
+    )
+
+    (method setSide: (len)
+        (set side1 len)
+        (set side2 len)
+        (set side3 len)
+        (updateSuper self)
+    )
 )
 
 ;;;;;;;;;;;;;;; shape testers ;;;;;;;;;;;;;;;;;;
@@ -338,4 +348,25 @@
 (getSide3 tri)
 (getPerimeter tri)
 (getArea tri)
+
+
+;;;;;;;;;;;;;;;;; Equilateral Triangle ;;;;;;;;;;;
+
+#EquilateralTriangleTesters
+
+
+(localProtocol Equilateral)
+
+(val e1 (initalize:equilateral Equilateral 3))
+
+(getSide e1)
+(getPerimeter e1)
+(getArea e1)
+
+(setSide: e1 5)
+
+(getSide e1)
+(getPerimeter e1)
+(getArea e1)
+
 
