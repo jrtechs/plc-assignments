@@ -155,6 +155,87 @@
 
 (class Triangle Shape
     (side1 side2 side3)
+
+    (class-method initalize:::triangle (s1 s2 s3)
+        (init:::triangle (new self) s1 s2 s3)
+    )
+
+    (method init:::triangle (s1 s2 s3)
+        (set side1 s1)
+        (set side2 s2)
+        (set side3 s3)
+        (updateSuper self)
+        self
+    )
+
+    (method updateSuper ()
+        (setPerimeter: self (computePerimeter self))
+        (setArea: self (computeArea self))
+    )
+
+    (method getSide1 ()
+        side1
+    )
+
+    (method getSide2 ()
+        side2
+    )
+
+    (method getSide3 ()
+        side3
+    )
+
+    (method setSide1: (s1)
+        (set side1 s1)
+        (updateSuper self)
+    )
+
+    (method setSide2: (s2)
+        (set side2 s2)
+        (updateSuper self)
+    )
+
+    (method setSide3: (s3)
+        (set side3 s3)
+        (updateSuper self)
+    )
+
+    (method computePerimeter ()
+        (+
+            side1
+            (+
+                side2
+                side3
+            )
+        )
+    )
+
+    ; computes are with Heron's formula
+    ; p = perimeter /3
+    ; area = sqrt(p(p - s1)(p-s2)(p-s3))
+    (method computeArea ()
+        (sqrt 
+          (*
+            (asFloat (/ perimeter 2))
+            (*
+              (-
+                (asFloat (/ perimeter 2))
+                (asFloat side1)
+              )
+              (*
+                (-
+                  (asFloat (/ perimeter 2))
+                  (asFloat side2)
+                )
+                (-
+                  (asFloat (/ perimeter 2))
+                  (asFloat side3)
+                )
+              )
+            )
+          )
+        )
+    )
 )
 
 
@@ -236,4 +317,25 @@
 (getPerimeter sq1)
 (getArea sq1)
 
+;;;;;;;;;;;;;;;;; Triangle Testers ;;;;;;;;;;;;;;
+
+#TriangleTesters ; prints TriangleTesters
+
+(localProtocol Triangle)
+
+(val tri (initalize:::triangle Triangle 3 4 5 ))
+(getSide1 tri)
+(getSide2 tri)
+(getSide3 tri)
+(getPerimeter tri)
+(getArea tri)
+
+(setSide1: tri 4)
+(setSide2: tri 6)
+(setSide3: tri 3)
+(getSide1 tri)
+(getSide2 tri)
+(getSide3 tri)
+(getPerimeter tri)
+(getArea tri)
 
