@@ -130,6 +130,26 @@
 
 (class Square Rectangle
     ()
+    
+    (class-method initalize:square (len)
+        (init:square (new self) len)
+    )
+
+    (method init:square (len)
+        (setSide: self len)
+        self
+    )
+
+    (method getSide ()
+        length
+    )
+
+    (method setSide: (sid)
+        (set width sid)
+        (set length sid)
+        (setArea: self (computeArea self))
+        (setPerimeter: self (computePerimeter self))
+    )
 )
 
 
@@ -192,5 +212,28 @@
 (getWidth rec1)
 (getArea rec1)
 (getPerimeter rec1)
+
+
+;;;;;;;;;;;;;; Square Testers ;;;;;;;;;;;;;;;;;
+
+#SquareTesters
+
+(localProtocol Square)
+(val sq1 (initalize:square Square 5))
+
+(getSide sq1)
+(getPerimeter sq1)
+(getArea sq1)
+
+(setSide: sq1 4)
+(getSide sq1)
+(getPerimeter sq1)
+(getArea sq1)
+
+
+(setSide: sq1 8)
+(getSide sq1)
+(getPerimeter sq1)
+(getArea sq1)
 
 
