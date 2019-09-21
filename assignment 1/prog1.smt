@@ -54,12 +54,19 @@
     )
 
     (method computeArea ()
-        (* (asFloat (/ 22 7)) (asFloat (squared radius)) )
+        (* 
+            (asFloat (/ 22 7)) 
+            (asFloat (squared radius))
+        )
     )
 
     (method computePerimeter ()
-        (* (asFloat 2) 
-            (* (asFloat (/ 22 7)) (asFloat radius))
+        (* 
+            (asFloat 2) 
+            (* 
+                (asFloat (/ 22 7)) 
+                (asFloat radius)
+            )
         )
     )
 )
@@ -67,6 +74,57 @@
 
 (class Rectangle Shape
     (length width)
+
+    (class-method initalize::rectangle (len wid)
+        (init::rectangle (new self) len wid)
+    )
+
+    (method init::rectangle (len wid)
+        (set width wid)
+        (set length len)
+        (setArea: self (computeArea self))
+        (setPerimeter: self (computePerimeter self))
+        self
+    )
+
+    (method getLength ()
+        length
+    )
+
+    (method getWidth ()
+        width
+    )
+
+    (method setWidth: (wid)
+        (set width wid)
+        
+        (setArea: self (computeArea self))
+        (setPerimeter: self (computePerimeter self))
+    )
+
+    (method setLength: (len)
+        (set length len)
+        
+        (setArea: self (computeArea self))
+        (setPerimeter: self (computePerimeter self))
+    )
+
+    (method computeArea ()
+        (* width length)
+    )
+
+    (method computePerimeter ()
+        (+ 
+            (* 
+                (asFloat 2)
+                (asFloat length)
+            )
+            (*
+                (asFloat 2)
+                (asFloat width)
+            )
+        )
+    )
 )
 
 
@@ -85,6 +143,7 @@
 )
 
 ;;;;;;;;;;;;;;; shape testers ;;;;;;;;;;;;;;;;;;
+#shapeTesters ; prints shape testers
 
 (localProtocol Shape)
 
@@ -101,6 +160,7 @@
 (getPerimeter shape1)
 
 ;;;;;;;;;;;;;; circle testers ;;;;;;;;;;;;;;;;;;
+#CircleTesters
 
 (localProtocol Circle)
 
@@ -113,5 +173,24 @@
 (getRadius circle1)
 (getArea circle1)
 (getPerimeter circle1)
+
+
+;;;;;;;;;;;;;; Rectangle Testers ;;;;;;;;;;;;;;;
+
+#RectangleTesters ; prints rectangle testers
+
+(localProtocol Rectangle)
+(val rec1 (initalize::rectangle Rectangle 3 2))
+(getLength rec1)
+(getWidth rec1)
+(getArea rec1)
+(getPerimeter rec1)
+
+(setLength: rec1 10)
+(setWidth: rec1 12)
+(getLength rec1)
+(getWidth rec1)
+(getArea rec1)
+(getPerimeter rec1)
 
 
