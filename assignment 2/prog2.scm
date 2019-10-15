@@ -69,11 +69,10 @@
 
 
 (define (cbrtRec i n)
-  (display i)
-  (if (>= (cube n) n)
-      (if (= (cube i) n)
+  (if (<= (cube i) n)
+      (if (< n (cube (+ 1 i)))
           i
-          (myCbrt (cube (- n -1))) 
+          (cbrtRec (+ i 1) n)
       )
       (cbrtRec (+ i 1) n)
   )
@@ -86,7 +85,13 @@
 ; else:
 ;   s is cubred root of n, iff s^3 <= n < (s + 1)^3
 (define (myCbrt n)
- (cbrtRec (* -1 (abs n)) n)
+  (if (> n 0)
+      (cbrtRec 0 n)
+      (*
+         -1
+         (cbrtRec 0 (abs n))
+      )
+  )
 )
 
 
