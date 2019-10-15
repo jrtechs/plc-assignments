@@ -148,9 +148,33 @@
 )
 
 
+; finds the sum of the list
+(define (sumList lst)
+  (if (null? lst)
+      0 ; empty list
+      (+
+         (car lst)
+         (sumList (cdr lst))
+      )
+  )
+)
+
+
+(define (length lst)
+  (if (null? lst)
+     0
+     (+
+       1
+       (length (cdr lst))
+     )
+  )
+)
+
+
+
 ; Finds the average of the list
 (define (avgList lst)
- '()
+ (/ (sumList lst) (length lst))
 )
 
 
