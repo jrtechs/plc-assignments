@@ -52,13 +52,38 @@
 )
 
 
+(define (cube n)
+  (* n (* n n))
+)
+
+
+(define (abs n)
+  (if (>= n 0)
+      n
+      (* n -1)
+  )
+)
+
+
+(define (cbrtRec i n)
+  (display i)
+  (if (>= (cube n) n)
+      (if (= (cube i) n)
+          i
+          (myCbrt (cube (- n -1))) 
+      )
+      (cbrtRec (+ i 1) n)
+  )
+)
+
+
 ; Similare to square root but can do negatives
 ; when n < 0:
 ;   -s is the cubred root of n, iff s^3 <= -n < (s + 1)^3
 ; else:
 ;   s is cubred root of n, iff s^3 <= n < (s + 1)^3
 (define (myCbrt n)
- '()
+ (cbrtRec (* -1 (abs n)) n)
 )
 
 
@@ -75,33 +100,33 @@
 
 
 
-(define (insert x xs)
+(define (insert x xs op)
       (if (null? xs)
         (cons x '())
-        (if (< x (car xs))
+        (if (op x (car xs))
             (cons x xs)
-            (cons (car xs) (insert x (cdr xs)))
+            (cons (car xs) (insert x (cdr xs) op))
         )
     )
 )
 
-(define (insertion-sort xs)
+(define (insertion-sort xs op)
     (if (null? xs)
         '()
-        (insert (car xs) (insertion-sort (cdr xs)))
+        (insert (car xs) (insertion-sort (cdr xs) op) op)
     )
 )
 
 
 ; Finds min of list w/o modifying the list
 (define (myMin lst)
- '()
+ (car (insertion-sort lst <))
 )
 
 
 ; Finds the max of the list w/o modifying the list
 (define (myMax lst)
- '()
+ (car (insertion-sort lst >))
 )
 
 
