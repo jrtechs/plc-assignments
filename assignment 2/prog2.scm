@@ -171,6 +171,19 @@
 )
 
 
+(define (getElementRec lst n i)
+  (if (= n i)
+      (car lst)
+      (getElementRec (cdr lst) n (+ i 1))
+  )
+)
+
+
+; gets the nth zero indexed item from the list
+(define (getElement lst n)
+  (getElementRec lst n 0)
+)
+
 
 ; Finds the average of the list
 (define (avgList lst)
@@ -180,5 +193,8 @@
 
 ; Finds the medium of the list
 (define (medList lst)
- '()
+  (getElement
+    (insertion-sort lst <)
+    (floor (/ (length lst) 2))
+  )
 )
