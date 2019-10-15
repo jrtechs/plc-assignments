@@ -1,5 +1,8 @@
 #lang racket
 
+; PLC assignment 2
+; @author Jeffery Russell 10-15-19
+
 (define (list1 x)
   (cons x '())
 )
@@ -135,7 +138,13 @@
 ;   1 if true(in list)
 ;   0 if not in list
 (define (inList lst n)
- '()
+ (if (null? lst)
+     0
+     (if (= n (car lst))
+         1
+         (inList (cdr lst) n)
+     )
+ ) 
 )
 
 
