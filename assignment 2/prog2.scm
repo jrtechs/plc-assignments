@@ -91,14 +91,20 @@
 
 
 ; Finds the GCD between two numbers
-(define (myGcd n1 n2)
- '()
+(define (myGcd a b)
+  (if (= a 0)
+      b
+      (myGcd (myMod b a) a)
+  )
 )
 
 
 ; Finds the least common multiple of two numbers
-(define (myLcm n1 n2)
-   '()
+(define (myLcm a b)
+   (/
+    (* a b)
+    (myGcd a b)
+   )
 )
 
 
@@ -160,6 +166,7 @@
 )
 
 
+; Computes length of list
 (define (length lst)
   (if (null? lst)
      0
