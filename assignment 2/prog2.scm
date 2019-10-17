@@ -205,8 +205,28 @@
 
 ; Finds the medium of the list
 (define (medList lst)
-  (getElement
-    (insertion-sort lst <)
-    (floor (/ (length lst) 2))
+  (if (= (myMod (length lst) 2) 0)
+    ; even length
+    (floor
+     (/
+      (+
+        (getElement
+         (insertion-sort lst <)
+         (floor (/ (length lst) 2))
+        )
+        (getElement
+         (insertion-sort lst <)
+         (- (floor (/ (length lst) 2)) 1)
+        )
+      )
+      2
+     )
+    )
+    ; odd length
+    (getElement
+     (insertion-sort lst <)
+     (floor (/ (length lst) 2)
+    )
+   )
   )
 )
