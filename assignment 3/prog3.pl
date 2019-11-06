@@ -26,19 +26,23 @@ biPath(A, B, Y) :- path(B, A, Y).
 % N is the distance between X and Y if one exists
 
 % rule for terminal
-solveV(X, X, [], 0, [_]).
+solveV(X, X, [], 0, []).
 
 % rule for one away
-solveV(A, B, [A|B], N, [_]) :- biPath(A, B, C), N is C. 
+solveV(A, B, [A|B], N, []) :- biPath(A, B, C), N is C. 
 
+
+solveV(A, B, [A|PP], N, V) :- biPath(A, C, F), solveV(C, B, PP, U, []), 
+    N is F + U.
 
 % more than one away
-solveV(A, C, P, N, V) :- biPath(A, B, T), 
-    solveV(B, C, [A|B], U, [C|V]) , 
-    N is T + U,
-    P is [P|B].
+%solveV(A, C, P, N, V) :- biPath(A, B, T),
+%    \+member(B, V),
+%    solveV(B, C, [A|B], U, [B|V]) ,
+%    N is T + U,
+%    P is [P|B].
 
 
-solve(A, B, P, N) :- solveV(A, B, P, N, V).
+solve(A, B, P, N) :- solveV(A, B, P, N, []).
 %solve(X, Y, P, N) :- path()
 
