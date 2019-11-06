@@ -16,7 +16,9 @@ path(d, c, 5).
 path(d, b, 10).
 
 
-path(A, B, Y) :- path(B, A, Y).
+% makes paths bi-directional
+biPath(A, B, Y) :- path(A, B, Y).
+biPath(A, B, Y) :- path(B, A, Y).
 
 % X is starting point
 % Y is ending point
@@ -24,13 +26,19 @@ path(A, B, Y) :- path(B, A, Y).
 % N is the distance between X and Y if one exists
 
 % rule for terminal
-solve(X, X, [], 0).
+solveV(X, X, [], 0, [_]).
 
 % rule for one away
-solve(A, B, P, N) :- path(A, B, C), P is [B], N is C. 
+solveV(A, B, [A|B], N, [_]) :- biPath(A, B, C), N is C. 
+
 
 % more than one away
-solve(A, C, P, N) :- path(A, B, T), solve(B, C, Y, U) , N is T + U, P is [P|B]
+solveV(A, C, P, N, V) :- biPath(A, B, T), 
+    solveV(B, C, [A|B], U, [C|V]) , 
+    N is T + U,
+    P is [P|B].
 
+
+solve(A, B, P, N) :- solveV(A, B, P, N, V).
 %solve(X, Y, P, N) :- path()
 
