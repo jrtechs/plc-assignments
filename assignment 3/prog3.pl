@@ -28,7 +28,7 @@ biPath(A, B, Y) :- path(B, A, Y).
 solveV(X, X, [X], 0, V).
 
 % rule for one away
-solveV(A, B, [A, B], N, V) :- biPath(A, B, C), N is C. 
+solveV(A, B, [A, B], N, V) :- biPath(A, B, C), \+member(B, V), N is C. 
 
 
 %solveV(A, B, [A, C, B], N, V) :- biPath(A, C, CC),
@@ -39,19 +39,6 @@ solveV(A, B, [A|P], N, V) :- biPath(A, C, CC),
                              \+member(C, V),
                              solveV(C, B, P, CCC, [C|V]),
                              N is CC + CCC.
-
-%solveV(A, B, [A|PP], N, V) :- biPath(A, C, F),
-%    \+member(C, V),
-%    solveV(C, B, PP, U, []), 
-%    N is F + U.
-
-% more than one away
-%solveV(A, C, P, N, V) :- biPath(A, B, T),
-%    \+member(B, V),
-%    solveV(B, C, [A|B], U, [B|V]) ,
-%    N is T + U,
-%    P is [P|B].
-
 
 solve(A, B, P, N) :- solveV(A, B, P, N, [A]).
 %solve(X, Y, P, N) :- path()
