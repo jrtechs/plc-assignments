@@ -3,20 +3,39 @@
 % PLC-assignment 3
 
 
-
-
 % path(a, b, d)
 % a is the starting point of the path
 % b is the endoing point of the path
 % d is the distance of the path
 
-path(a, b, 10).
-path(b, c, 15).
-path(d, c, 5).
-path(d, b, 10).
+%ex:
+%              h
+%              -
+%              -
+%  a---b---f---g
+%     -        -
+%   -  -       -
+%  c---d-------e
+%path(a, b, 10).
+%path(b, c, 15).
+%path(d, c, 5).
+%path(d, b, 10).
+%path(d, e, 45).
+%path(b, f, 6).
+%path(g, f, 3).
+%path(e, g, 2).
+%path(h, g, 4).
 
+% ex test runs in interpreter
+% solve(h, c, P, N).
+% solve(a, e, P, N).
+% solve(g, c, P, N).
+% solve(a, a, P, N).
+% solve(g, h, P, N).
 
-path(A, B, Y) :- path(B, A, Y).
+% makes paths bi-directional
+biPath(A, B, Y) :- path(A, B, Y).
+biPath(A, B, Y) :- path(B, A, Y).
 
 % X is starting point
 % Y is ending point
@@ -24,13 +43,13 @@ path(A, B, Y) :- path(B, A, Y).
 % N is the distance between X and Y if one exists
 
 % rule for terminal
-solve(X, X, [], 0).
+solveV(X, X, [X], 0, V).
 
-% rule for one away
-solve(A, B, P, N) :- path(A, B, C), P is [B], N is C. 
+% recursively build out path
+solveV(A, B, [A|P], N, V) :- biPath(A, C, CC),
+                             \+member(C, V),
+                             solveV(C, B, P, CCC, [C|V]),
+                             N is CC + CCC.
 
-% more than one away
-solve(A, C, P, N) :- path(A, B, T), solve(B, C, Y, U) , N is T + U, P is [P|B]
-
-%solve(X, Y, P, N) :- path()
-
+% expand given definition to helper function
+solve(A, B, P, N) :- solveV(A, B, P, N, [A]).
