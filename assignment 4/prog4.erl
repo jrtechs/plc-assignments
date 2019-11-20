@@ -27,23 +27,54 @@ spawn_client(N) ->
 % negatives removes from bank, positives add
 % returns {<client_id>, balance}
 bank() ->
-  Balance = rand:uniform(2000) + 1000,
+  Balance = rand:uniform(2000) + 999,
   io:format("Bank balance starting at: ~w~n", [Balance]),
+  Client_count = rand:uniform(8) + 1,
+  Client_left = 0,
+  spawn_client(Client_count),
+  loop(Balance, Client_count, Client_left).
 
-  spawn_client(rand:uniform(8) + 2),
 
+loop(Balance, Client_count, Client_left) ->
   receive
+    %io:format("Bank now has ~w", [balance])
+    {CLIENT_ID, balance} ->
+      io:fwrite("Requested Balance from ~w\n", [CLIENT_ID]),
+      CLIENT_ID ! {Balance},
+      loop(Balance, Client_count, Client_left);
     {CLIENT_ID, NUMBER} ->
-      io:format("Bank now has ~w", [balance])
+      if
+        Balance + NUMBER >= 0 ->
+          CLIENT_ID ! {NUMBER, Balance, yes},
+          loop(Balance + NUMBER, Client_count, Client_left);
+        true ->
+          CLIENT_ID ! {NUMBER, Balance, no},
+          loop(Balance, Client_count, Client_left)
+      end;
+    {goodbye} ->
+      if
+        Client_left == Client_count ->
+          io:fwrite("Client leaving\n");
+        true ->
+          loop(Balance, Client_count + 1, Client_left)
+      end
   end.
 
 
 client() ->
 %%  Count = 0,
+  bank_pid ! {self(), balance},
+  receive
+    {Balance} ->
+      io:format("Bank has a balance of: ~w~n", [Balance])
+  end,
   io:fwrite("Client created\n").
 
 
 start() ->
   register(bank_pid, spawn(prog4, bank, [])),
+
+
+
   io:fwrite("hello world").
 
