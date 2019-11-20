@@ -61,20 +61,38 @@ loop(Balance, Client_count, Client_left) ->
   end.
 
 
-client() ->
-%%  Count = 0,
-  bank_pid ! {self(), balance},
-  receive
-    {Balance} ->
-      io:format("Bank has a balance of: ~w~n", [Balance])
+client_loop(LoopUntil, CurrentIndex) ->
+
+  if
+    CurrentIndex rem 5 == 0 ->
+      bank_pid ! {self(), balance},
+      receive
+        {Balance} ->
+          io:format("Bank has a balance of: ~w~n", [Balance])
+      end
   end,
-  io:fwrite("Client created\n").
+
+  if
+    LoopUntil == CurrentIndex ->
+      io:fwrite("Client Finished\n");
+    true ->
+      bank_pid ! {self(), 100-rand:uniform(199) },
+
+      receive
+        {Amount, Balance, Suc} ->
+          io:format("Bank now has a balance of ~w after a withdraw of ~w which was sucessful: ~w", [Amount, Balance, Suc])
+      end,
+      client_loop(LoopUntil, CurrentIndex + 1)
+  end.
+
+
+client() ->
+  Nums = rand:uniform(10) + 9,
+
+  client_loop(Nums, 1).
 
 
 start() ->
   register(bank_pid, spawn(prog4, bank, [])),
-
-
-
   io:fwrite("hello world").
 
