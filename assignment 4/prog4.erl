@@ -9,7 +9,18 @@
 -author("jeff").
 
 %% API
--export([start/0, bank/0]).
+-export([start/0, bank/0, client/0]).
+
+
+spawn_client(N) when N > 1 ->
+  io:fwrite("Spawning a client\n"),
+  spawn(prog4, client, []),
+  spawn_client(N -1);
+
+spawn_client(N) ->
+  io:fwrite("Spawned all clients\n").
+
+
 
 % start with random account balance between 2k-3k
 % receives message {clientid, number}
@@ -17,12 +28,19 @@
 % returns {<client_id>, balance}
 bank() ->
   Balance = rand:uniform(2000) + 1000,
-  io:format("Bank balance starting at: ~w", [Balance]),
+  io:format("Bank balance starting at: ~w~n", [Balance]),
+
+  spawn_client(rand:uniform(8) + 2),
+
   receive
     {CLIENT_ID, NUMBER} ->
       io:format("Bank now has ~w", [balance])
   end.
 
+
+client() ->
+%%  Count = 0,
+  io:fwrite("Client created\n").
 
 
 start() ->
