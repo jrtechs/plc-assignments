@@ -61,18 +61,22 @@ loop(Balance, Client_count, Client_left) ->
   end.
 
 
+
+client_fetch_balance() ->
+  bank_pid ! {self(), balance},
+  receive
+    {Balance} ->
+      io:format("Bank has a balance of: ~w~n", [Balance])
+  end.
+
+
 client_loop(LoopUntil, CurrentIndex) ->
 
-%%  if
-%%    CurrentIndex rem 5 == 0 ->
-%%      bank_pid ! {self(), balance},
-%%      receive
-%%        {Balance} ->
-%%          io:format("Bank has a balance of: ~w~n", [Balance])
-%%      end;
-%%    true ->
-%%      io:fwrite("Not mod 5\n")
-%%  end,
+  if
+    CurrentIndex rem 5 == 0 ->
+      client_fetch_balance();
+    true -> pass
+  end,
 
   if
     LoopUntil == CurrentIndex ->
@@ -91,11 +95,8 @@ client_loop(LoopUntil, CurrentIndex) ->
 
 client() ->
   Nums = rand:uniform(10) + 9,
-
   client_loop(Nums, 0).
 
 
 start() ->
-  register(bank_pid, spawn(prog4, bank, [])),
-  io:fwrite("hello world").
-
+  register(bank_pid, spawn(prog4, bank, [])).
