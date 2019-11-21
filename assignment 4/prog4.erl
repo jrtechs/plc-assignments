@@ -11,8 +11,9 @@
 %% API
 -export([start/0, bank/0, client/0]).
 
-
-spawn_client(N) when N > 1 ->
+% helper function to spawn a specific amount
+% of clients
+spawn_client(N) when N >= 1 ->
   io:fwrite("Spawning a client\n"),
   spawn(prog4, client, []),
   spawn_client(N -1);
@@ -27,14 +28,15 @@ spawn_client(_) ->
 % negatives removes from bank, positives add
 % returns {<client_id>, balance}
 bank() ->
-  Balance = rand:uniform(2000) + 999,
+  Balance = rand:uniform(1000) + 1999,
   io:format("Bank balance starting at: ~w~n", [Balance]),
-  Client_count = rand:uniform(8) + 1,
-  Client_left = 2,
+  Client_count = rand:uniform(7) + 2,
+  Client_left = 1,
   spawn_client(Client_count),
   loop(Balance, Client_count, Client_left).
 
-
+% main bank loop which listens for messages and
+% processes them
 loop(Balance, Client_count, Client_left) ->
   receive
     %io:format("Bank now has ~w", [balance])
@@ -61,7 +63,7 @@ loop(Balance, Client_count, Client_left) ->
   end.
 
 
-
+% helper function to fetch and print balance of the bank
 client_fetch_balance() ->
   bank_pid ! {self(), balance},
   receive
@@ -70,8 +72,12 @@ client_fetch_balance() ->
   end.
 
 
+% client process loop
+% if loop is increment of 5, it requests balance of bank
+% withdraws a random amount of money from mank
+% and prints the bank's response
+% after each withdrawl, it will sleep
 client_loop(LoopUntil, CurrentIndex) ->
-
   if
     CurrentIndex rem 5 == 0 ->
       client_fetch_balance();
@@ -89,14 +95,17 @@ client_loop(LoopUntil, CurrentIndex) ->
         {Amount, Balance, Suc} ->
           io:format("~w recieved the balance of ~w from the bank after a ~w transation request of ~w~n", [self(), Balance, Suc, Amount])
       end,
+      timer:sleep(rand:uniform(1000) + 499),
       client_loop(LoopUntil, CurrentIndex + 1)
   end.
 
 
+% creates random amount of clients
 client() ->
   Nums = rand:uniform(10) + 9,
   client_loop(Nums, 0).
 
 
+% spawns the bank
 start() ->
   register(bank_pid, spawn(prog4, bank, [])).
