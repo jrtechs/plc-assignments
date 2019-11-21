@@ -1,7 +1,7 @@
 %%%-------------------------------------------------------------------
 %%% @author Jeffery Russell
 %%% @doc
-%%%
+%%% PLC assignment 4
 %%% @end
 %%% Created : 16. Nov 2019 5:40 PM
 %%%-------------------------------------------------------------------
@@ -17,7 +17,7 @@ spawn_client(N) when N > 1 ->
   spawn(prog4, client, []),
   spawn_client(N -1);
 
-spawn_client(N) ->
+spawn_client(_) ->
   io:fwrite("Spawned all clients\n").
 
 
@@ -30,7 +30,7 @@ bank() ->
   Balance = rand:uniform(2000) + 999,
   io:format("Bank balance starting at: ~w~n", [Balance]),
   Client_count = rand:uniform(8) + 1,
-  Client_left = 0,
+  Client_left = 2,
   spawn_client(Client_count),
   loop(Balance, Client_count, Client_left).
 
@@ -51,36 +51,39 @@ loop(Balance, Client_count, Client_left) ->
           CLIENT_ID ! {NUMBER, Balance, no},
           loop(Balance, Client_count, Client_left)
       end;
-    {goodbye} ->
+    goodbye ->
       if
         Client_left == Client_count ->
-          io:fwrite("Client leaving\n");
+          io:format("Bank is closing with balance ~w`\n", [Balance]);
         true ->
-          loop(Balance, Client_count + 1, Client_left)
+          loop(Balance, Client_count, Client_left + 1)
       end
   end.
 
 
 client_loop(LoopUntil, CurrentIndex) ->
 
-  if
-    CurrentIndex rem 5 == 0 ->
-      bank_pid ! {self(), balance},
-      receive
-        {Balance} ->
-          io:format("Bank has a balance of: ~w~n", [Balance])
-      end
-  end,
+%%  if
+%%    CurrentIndex rem 5 == 0 ->
+%%      bank_pid ! {self(), balance},
+%%      receive
+%%        {Balance} ->
+%%          io:format("Bank has a balance of: ~w~n", [Balance])
+%%      end;
+%%    true ->
+%%      io:fwrite("Not mod 5\n")
+%%  end,
 
   if
     LoopUntil == CurrentIndex ->
+      bank_pid ! goodbye,
       io:fwrite("Client Finished\n");
     true ->
       bank_pid ! {self(), 100-rand:uniform(199) },
 
       receive
         {Amount, Balance, Suc} ->
-          io:format("Bank now has a balance of ~w after a withdraw of ~w which was sucessful: ~w", [Amount, Balance, Suc])
+          io:format("~w~n", [{Amount,Balance, Suc}])
       end,
       client_loop(LoopUntil, CurrentIndex + 1)
   end.
@@ -89,7 +92,7 @@ client_loop(LoopUntil, CurrentIndex) ->
 client() ->
   Nums = rand:uniform(10) + 9,
 
-  client_loop(Nums, 1).
+  client_loop(Nums, 0).
 
 
 start() ->
