@@ -39,16 +39,16 @@ loop(Balance, Client_count, Client_left) ->
   receive
     %io:format("Bank now has ~w", [balance])
     {CLIENT_ID, balance} ->
-      io:fwrite("Requested Balance from ~w\n", [CLIENT_ID]),
+      io:fwrite("~w Requested Balance from the bank\n", [CLIENT_ID]),
       CLIENT_ID ! {Balance},
       loop(Balance, Client_count, Client_left);
     {CLIENT_ID, NUMBER} ->
       if
         Balance + NUMBER >= 0 ->
-          CLIENT_ID ! {NUMBER, Balance, yes},
+          CLIENT_ID ! {NUMBER, Balance + NUMBER, successful},
           loop(Balance + NUMBER, Client_count, Client_left);
         true ->
-          CLIENT_ID ! {NUMBER, Balance, no},
+          CLIENT_ID ! {NUMBER, Balance, failed},
           loop(Balance, Client_count, Client_left)
       end;
     goodbye ->
@@ -66,7 +66,7 @@ client_fetch_balance() ->
   bank_pid ! {self(), balance},
   receive
     {Balance} ->
-      io:format("Bank has a balance of: ~w~n", [Balance])
+      io:format("~w recieved the balance of ~w from the bank~n", [self(), Balance])
   end.
 
 
@@ -81,13 +81,13 @@ client_loop(LoopUntil, CurrentIndex) ->
   if
     LoopUntil == CurrentIndex ->
       bank_pid ! goodbye,
-      io:fwrite("Client Finished\n");
+      io:format("~w Client Finished\n", [self()]);
     true ->
       bank_pid ! {self(), 100-rand:uniform(199) },
 
       receive
         {Amount, Balance, Suc} ->
-          io:format("~w~n", [{Amount,Balance, Suc}])
+          io:format("~w recieved the balance of ~w from the bank after a ~w transation request of ~w~n", [self(), Balance, Suc, Amount])
       end,
       client_loop(LoopUntil, CurrentIndex + 1)
   end.
