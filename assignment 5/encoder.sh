@@ -20,8 +20,8 @@ function encode_message
     do
         for word in $line
         do
-            printf ${MYMAP[${word},]} >> $3
-            printf '' >> $3
+            printf "%s" ${MYMAP[${word},]} >> $3
+            printf ' ' >> $3
         done
         echo "" >> $3
     done < "$1"
