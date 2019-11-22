@@ -12,7 +12,7 @@ function decode_message
         MYMAP[${arr[1]}]=${arr[0]}
     done < "$2"
 
-    for K in "${!MYMAP[@]}"; do echo $K; done
+    #for K in "${!MYMAP[@]}"; do echo $K; done
 
     # make sure file exists and is empty
     > $3
@@ -21,9 +21,7 @@ function decode_message
     do
         for word in $line
         do
-            echo $word
-            echo ${MYMAP[${word}]}
-            printf "%s" ${MYMAP[${word}]} >> $3
+            printf "%s" ${MYMAP[${word}]} | tr -d , >> $3
             printf ' ' >> $3
         done
         echo "" >> $3
