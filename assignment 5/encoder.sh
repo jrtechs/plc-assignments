@@ -6,7 +6,7 @@ function encode_message
 {
     declare -A MYMAP
 
-    while IFS= read -r line
+    while read line || [ -n "$line" ];
     do
         arr=($line)
         MYMAP[${arr[0]}]=${arr[1]}
@@ -16,7 +16,7 @@ function encode_message
     # make sure file exists and is empty
     > $3
 
-    while IFS= read -r line
+    while read line || [ -n "$line" ];
     do
         for word in $line
         do
