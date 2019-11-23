@@ -1,6 +1,11 @@
 #!/bin/bash
 
 #Author Jeffery Russell 11-22-19
+#
+# Encodes a message using a file which simply
+# specifies word subsitutions to make.
+#
+# Usage: <plane_text_file> <secret_key_file> <encoded_file>
 
 function encode_message
 {

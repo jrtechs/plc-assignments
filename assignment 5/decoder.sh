@@ -1,6 +1,11 @@
 #!/bin/bash
 
-#Author Jeffery Russell 11-22-19
+# Author Jeffery Russell 11-22-19
+#
+# Decodes a message using a file which
+# simply specifies subsitutions to make
+#
+# Usage: <encoded_file> <secret_key_file> <plane_text_out_file>
 
 function decode_message
 {

@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Author Jeffery Russell 11-22-19
+# 
+# Tester script which runs the encoder and decoder
+# to validate that you can go between these without
+# loss of information.
+# 
+# Usage: <plane_text_file> <secret_key_file>
+
 TEMP_FILE="out.txt"
 TEMP_BACK="out2.txt"
 
