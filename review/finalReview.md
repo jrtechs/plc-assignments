@@ -399,7 +399,7 @@ A horn clause contains a HEAD and a BODY, sll statements must be in this term. T
 
 ## Prolog Ex
 
-```prolog
+```Prolog
 path(b, f, 6).
 path(g, f, 3).
 path(e, g, 2).
@@ -476,9 +476,320 @@ Note: this does not prevent attempting to use memory outside of your block resul
 ![](media/plcfinal/lock.png)
 
 
-# Ch #13
+# Ch #13: Erlang
+
+Approaches to parallel programming:
+- Synchronized access to shared memory
+- Message passing between processes (slower)
+
+Race conditions are whe the result depends on the order of the thread actions.
+Usually due to bad synchronization but, not always bad.
+
+Synchronization ensures that events in different processes happen in a desired order.
+Mutual exclusion: only one can access at a time.
+Condition synchronization: wait until some condition is true.
+
+Spin lock - busy-wait mutual exclusion, they waste processing cycles. Semaphores: widely used and uses a scheduler-based methods.
+Monitors are used to note who is in a critical region.
+
+## Erlang
+
+Syntax of erlang is very similar to prolog with its pattern matching.
+Erlang relies on message passing for concurrency.
+Each process contains a "mailbox" where it can receive messages from.
+You process by listening for a message of a specific format: ie you can choose to ignore certain messages for a period of time.
+
+### Examples
+
+![](media/plcfinal/erlang.png)
+
+```Erlang
+%%%-------------------------------------------------------------------
+%%% @author Jeffery Russell
+%%% @doc
+%%% PLC assignment 4
+%%% @end
+%%% Created : 16. Nov 2019
+%%%-------------------------------------------------------------------
+-module(prog4).
+-author("jeff").
+
+%% API
+-export([start/0, bank/0, client/0]).
+
+% helper function to spawn a specific amount
+% of clients
+spawn_client(N) when N >= 1 ->
+  io:fwrite("Spawning a client\n"),
+  spawn(prog4, client, []),
+  spawn_client(N -1);
+
+spawn_client(_) ->
+  io:fwrite("Spawned all clients\n").
+
+% start with random account balance between 2k-3k
+% receives message {clientid, number}
+% negatives removes from bank, positives add
+% returns {<client_id>, balance}
+bank() ->
+  Balance = rand:uniform(1000) + 1999,
+  io:format("Bank balance starting at: ~w~n", [Balance]),
+  Client_count = rand:uniform(7) + 2,
+  Client_left = 1,
+  spawn_client(Client_count),
+  loop(Balance, Client_count, Client_left).
+
+% main bank loop which listens for messages and
+% processes them
+loop(Balance, Client_count, Client_left) ->
+  receive
+    %io:format("Bank now has ~w", [balance])
+    {CLIENT_ID, balance} ->
+      io:fwrite("~w Requested Balance from the bank\n", [CLIENT_ID]),
+      CLIENT_ID ! {Balance},
+      loop(Balance, Client_count, Client_left);
+    {CLIENT_ID, NUMBER} ->
+      if
+        Balance + NUMBER >= 0 ->
+          CLIENT_ID ! {NUMBER, Balance + NUMBER, successful},
+          loop(Balance + NUMBER, Client_count, Client_left);
+        true ->
+          CLIENT_ID ! {NUMBER, Balance, failed},
+          loop(Balance, Client_count, Client_left)
+      end;
+    goodbye ->
+      if
+        Client_left == Client_count ->
+          io:format("Bank is closing with balance ~w`\n", [Balance]);
+        true ->
+          loop(Balance, Client_count, Client_left + 1)
+      end
+  end.
 
 
+% helper function to fetch and print balance of the bank
+client_fetch_balance() ->
+  bank_pid ! {self(), balance},
+  receive
+    {Balance} ->
+      io:format("~w recieved the balance of ~w from the bank~n", [self(), Balance])
+  end.
 
-# Ch #14
+
+% client process loop
+% if loop is increment of 5, it requests balance of bank
+% withdraws a random amount of money from mank
+% and prints the bank's response
+% after each withdrawl, it will sleep
+client_loop(LoopUntil, CurrentIndex) ->
+  if
+    CurrentIndex rem 5 == 0 ->
+      client_fetch_balance();
+    true -> pass
+  end,
+
+  if
+    LoopUntil == CurrentIndex ->
+      bank_pid ! goodbye,
+      io:format("~w Client Finished\n", [self()]);
+    true ->
+      bank_pid ! {self(), 100-rand:uniform(199) },
+
+      receive
+        {Amount, Balance, Suc} ->
+          io:format("~w recieved the balance of ~w from the bank after a ~w transation request of ~w~n", [self(), Balance, Suc, Amount])
+      end,
+      timer:sleep(rand:uniform(1000) + 499),
+      client_loop(LoopUntil, CurrentIndex + 1)
+  end.
+
+
+% creates random amount of clients
+client() ->
+  Nums = rand:uniform(10) + 9,
+  client_loop(Nums, 0).
+
+
+% spawns the bank
+start() ->
+  register(bank_pid, spawn(prog4, bank, [])).
+```
+
+# Ch #14: Scripting Languages
+
+
+Common Characteristics:
+- both batch and interactive use
+- easy to write high level expressions
+- simple scoping rules
+- flexible dynamic typing
+- easy access to other programs
+- sophisticated pattern matching and string manipulation
+- high level data types
+
+Often used to glue together other programs.
+
+Need to know bash on the exam.
+
+## Bash
+
+### Shall Parameters
+
+- "$#" is the number of parameters passed
+- "$0" is name of the script and its location in filesystem
+- "$1" is the first command line parameter. Goes up till 9
+- "$*" single word of all the parameters
+- "$@" array of all the parameters
+
+ex:
+
+```bash
+if [ $# -eq 3 ];
+then
+    if [ -f $1 ]
+    then
+        if [ -f $2 ]
+        then
+            encode_message $1 $2 $3
+        else
+            echo "File $2 does not exist"
+        fi
+    else
+        echo "File $1 does not exist"
+    fi
+else
+    echo "Usage:"
+    echo "     encoder.sh <plane_text_file> <secret_key_file> <encoded_file>"
+fi
+```
+
+### Files
+
+```bash
+    while read line || [ -n "$line" ];
+    do
+        for word in $line
+        do
+            echo "$word"
+        done
+    done < "$1"
+```
+
+### Comparisons
+
+Numbers:
+
+- "-eq" equal
+- "-ge" greater than or equal
+- "-le" less than or equal
+- "-ne" not equal
+- "-gt" greater
+- "-lt" less
+
+ex:
+
+```bash
+[n1 -eq n2]
+```
+
+
+Strings:
+
+- "=" equal
+- "!=" not equal
+- "-n" length is greater than zero
+- "-z" length is equal to zero
+
+ex:
+
+```
+[ s1 - s2 ]
+[ -n s1 ]
+```
+
+Files:
+
+- "-d" path is a directory
+- "-f" is a file
+- "-e" file name exists
+- "-r" check of read permission
+- "-s" file has length greater than 0
+- "-w" write permission
+- "-x" execution permission
+
+ex:
+```bash
+[ -d fname ]
+```
+
+### Control Flow
+
+#### If Statements
+
+```bash
+if [ expression ];
+then
+    statements
+elif [ expression ];
+then
+    statements
+else
+    statements
+fi
+```
+
+
+#### Switch Statements
+
+```bash
+case $var in
+	val1)
+		statements
+        ;;
+	val2)
+		statements
+        ;;
+	*)
+		statements
+        ;;
+	esac
+```
+
+### Math
+
+To do math you math like this:
+
+```bash
+echo "$((124+23))"
+
+# or like this:
+
+VALOR=$[124+23]
+
+# or with let
+
+let X=124+23
+```
+
+
+### Functions
+
+Functions exist in bash.
+
+```bash
+#!/bin/bash
+hello()
+{
+    echo "Woeie"
+}
+hello  # no parenthesis needed when calling
+
+# you can also declare functions with the keyword
+
+function check()
+{
+    return 42
+}
+```
+
 
