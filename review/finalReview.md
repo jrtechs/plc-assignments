@@ -380,11 +380,100 @@ Two major types:
 When an expression of one type is used in the context of another. Implicit coercion is when the language does it. 
 Explicit is when the programmer does it (Casting).
 
-# Ch #12
+# Ch #12: Logical Programming
+
+Logical programming is based on predicate calculus.
+
+Important concepts:
+- Axioms: facts assumed true in knowledge base
+- Theorems: things that are provably true
+- Hypotheses: things or queries we would like to prove
+- ATOM is a constant like a number
+
+Within logical languages, statements can be written many ways.
+Logical languages are good for people but bad for people.
+Prolog uses backwards chaining to prove things true mathematically.
 
 
+A horn clause contains a HEAD and a BODY, sll statements must be in this term. The head is a single term, but, the body can be a list of terms.
 
-# Ch #8
+## Prolog Ex
+
+```prolog
+path(b, f, 6).
+path(g, f, 3).
+path(e, g, 2).
+path(h, g, 4).
+
+
+% makes paths bi-directional
+biPath(A, B, Y) :- path(A, B, Y).
+biPath(A, B, Y) :- path(B, A, Y).
+
+% X is starting point
+% Y is ending point
+% P is a list of the points on the final path if one exists
+% N is the distance between X and Y if one exists
+
+% rule for terminal
+solveV(X, X, [X], 0, V).
+
+% recursively build out path
+solveV(A, B, [A|P], N, V) :- biPath(A, C, CC),
+                             \+member(C, V),
+                             solveV(C, B, P, CCC, [C|V]),
+                             N is CC + CCC.
+
+% expand given definition to helper function
+solve(A, B, P, N) :- solveV(A, B, P, N, [A]).
+
+% ex test runs in interpreter
+solve(h, c, P, N).
+solve(a, e, P, N).
+solve(g, c, P, N).
+solve(a, a, P, N).
+solve(g, h, P, N).
+```
+
+# Ch #8: Composite Types
+
+Types:
+- Records (Structures)
+- Arrays
+- Strings
+- Pointers
+- Lists
+- File I/O
+
+## Garbage Collection
+
+Problem with reference counter for garbage collection:
+
+![](media/plcfinal/counter.png)
+
+Mark and Sweep solution:
+
+- Garbage collector walks heap basically marks everything as useless
+- starts at outside pointers marking everything it can get to as useful
+-walks the heap again placing useless items in the free queue.
+
+
+## Pointers
+
+### Tombstones
+
+Costly way of dealing with pointers references.
+This will create an additional object to maintain the pointer.
+
+![](media/plcfinal/rip.png)
+
+
+### Lock and Keys
+
+Makes sure that pointers and pointe contains the same lock value before you dereference the object.
+Note: this does not prevent attempting to use memory outside of your block resulting in a seg fault.
+
+![](media/plcfinal/lock.png)
 
 
 # Ch #13
@@ -392,3 +481,4 @@ Explicit is when the programmer does it (Casting).
 
 
 # Ch #14
+
