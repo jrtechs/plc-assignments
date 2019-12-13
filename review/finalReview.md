@@ -74,10 +74,130 @@ A scanner is most naturally represented as a DFA (Deterministic Finite Automaton
 
 ![](media/plcfinal/scanner.png)
 
-## LR Grammar
+# Ch #10 Object Oriented
 
-# Ch #10
+Three major OO Components:
 
+- Encapsulation
+- Inheritance
+- Dynamic method binding
+
+Strict terms for OO lang: everything is an object, inheritance, dynamic method binding.
+Since java has primitives, it is not a true OO language. 
+
+
+## Small Talk
+
+Started as a thesis project in the 1960's, has been noted as being one of the best OO language historically. 
+
+Basic coding examples on class-inheritance and constructors may be on exam.
+
+### Syntax
+
+Excessively uses parenthesis.
+Method calls are in the form: (function:: object parameter1 parameter 2).
+NOTICE: the colons in the function name represents how many parameters it has.
+Also, there are no commas between parameters.
+
+
+
+Basic example class. 
+
+```
+(class Shape Object
+    (perimeter area) ; class-level parameters
+    
+    ;constructor
+    (class-method initalize::shape (per ar)
+        (init::shape (new self) per ar)
+    )
+
+    (method init::shape (per ar)
+        (setPerimeter: self per)
+        (setArea: self ar)
+        self
+    )
+
+    (method getPerimeter () 
+        perimeter
+    )
+    
+    (method getArea () 
+        area
+    )
+
+    (method setArea: (a)
+        (set area a)
+    )
+
+    (method setPerimeter: (p)
+        (set perimeter p)
+    )
+)
+
+(val shape1 (initalize::shape Shape 12 5))
+
+; area
+(getArea shape1)
+(setArea: shape1 88)
+(getArea shape1)
+```
+
+
+Example with inheritance:
+
+```
+(class Circle Shape
+    (radius)
+
+    (class-method initalize:circle (rad)
+        (init:circle (new self) rad)
+    )
+
+    (method init:circle (rad)
+        (setRadius: self rad)
+        self
+    )
+
+    (method setRadius: (rad)
+        (set radius rad)
+        (setArea: self (computeArea self))
+        (setPerimeter: self (computePerimeter self))
+    )
+
+    (method getRadius ()
+        radius
+    )
+
+    (method computeArea ()
+        (* 
+            (asFloat (/ 22 7)) 
+            (asFloat (squared radius))
+        )
+    )
+
+    (method computePerimeter ()
+        (* 
+            (asFloat 2) 
+            (* 
+                (asFloat (/ 22 7)) 
+                (asFloat radius)
+            )
+        )
+    )
+)
+
+
+(val circle1 (initalize:circle Circle 5))
+(getRadius circle1)
+(getArea circle1)
+(getPerimeter circle1)
+
+(setRadius: circle1 6)
+(getRadius circle1)
+(getArea circle1)
+(getPerimeter circle1)
+```
 
 # Ch #3
 
