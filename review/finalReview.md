@@ -335,13 +335,50 @@ Note: cdr is tail of list and car is the first element in the list.
 )
 ```
 
-# Ch #6
+# Ch #6: Control Flow
+
+Types of iteration:
+- Sequencing: specifies a linear ordering on statements
+- Selection: selects a section of code ie: if statements
+- Iteration: for loops, iterates over a well-defined set
+- Concurrency
+- Exception Handling
+- Non-determinacy
 
 
+Orthogonality: feature can be used in any combination and the meaning is consistent.
 
-# Ch #7
+
+# Ch #7: Data Types
 
 
+Data types are a collection of values from a "domain".
+Data types specify the structure of the data and a collection of well-defined operations you can perform on that type.
+Data types are useful for implicit context and so that we can avoid meaningless operations.
+
+Strong typing is when language prevents on data that is not appropriate.
+
+Static typing is strong typing that the compiler can do.
+
+Orthogonality: no restriction on how a collection of features can be combined: like python lists.
+
+## Type Systems
+
+A type system has rules for the following:
+- type equivalence
+- type compatibility: can type A be used in context of type B
+- type inference: type of expression given its operands types
+
+## Type Checking
+
+Two major types:
+- Structural Equivalence: based on memory layout to determine if same -- can result in unintended equivalencies
+- Name equivalence: based on declaration type -- most common
+
+## Coercion
+
+When an expression of one type is used in the context of another. Implicit coercion is when the language does it. 
+Explicit is when the programmer does it (Casting).
 
 # Ch #12
 
