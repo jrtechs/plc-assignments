@@ -2,7 +2,6 @@
 % 11-5-19
 % PLC-assignment 3
 
-
 % path(a, b, d)
 % a is the starting point of the path
 % b is the endoing point of the path
